@@ -1,0 +1,31 @@
+#!/usr/bin/env osascript
+on run argv
+
+set newDevice to item 1 of argv
+
+if newDevice contains "hdmi" then
+  set newOutput to 2
+else if newDevice contains "headset" then
+  set newOutput to 4
+else 
+  set newOutput to 2
+end if
+
+tell application "System Preferences"
+  activate
+  set current pane to pane "com.apple.preference.sound"
+end tell
+
+tell application "System Events"
+  tell application process "System Preferences"
+    repeat until exists tab group 1 of window "Sound"
+    end repeat
+    tell tab group 1 of window "Sound"
+      click radio button "Output"
+        set selected of row newOutput of table 1 of scroll area 1 to true
+    end tell
+  end tell
+end tell
+
+tell application "System Preferences" to quit
+end

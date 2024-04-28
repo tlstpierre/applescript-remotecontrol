@@ -1,0 +1,39 @@
+#!/usr/bin/env osascript
+on run argv 
+  if length of argv is 1 then
+    set meetAction to item 1 of argv
+  else
+    set meetAction to "open"
+  end if
+
+tell application "Google Chrome"
+  activate
+  repeat with w in (windows)
+          set j to 0
+          repeat with t in (tabs of w)
+              set j to j + 1
+              if title of t contains "Meet" then
+                  set (active tab index of w) to j
+                  set index of w to 1
+                  tell application "System Events" to tell process "Google Chrome"
+                      perform action "AXRaise" of window 1 -- `set index` doesn't always raise the window
+                      if meetAction is "mute" then
+                        keystroke "d" using {command down}
+                      else if meetAction is "camera" then
+                        keystroke "e" using {command down}
+                      else if meetAction is "chat" then
+                        keystroke "c" using {command down,control down}
+                      else if meetAction is "hand" then
+                        keystroke "h" using {command down,control down}
+                      else if meetAction is "hangup" then
+                        keystroke "w" using {command down}
+                      end
+                  end tell
+                  
+                  return -- we found the window so no need to continue
+              end if
+          end repeat
+      end repeat
+      open location "https://meet.google.com"
+  end tell
+end
